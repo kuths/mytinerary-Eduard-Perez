@@ -1,3 +1,10 @@
+import { NavLink } from "react-router-dom";
+
+const routes = [
+  { path: "/", name: "Home" },
+  { path: "/Cities", name: "Cities" },
+];
+
 const Footer = () => {
   return (
     <footer className="bg-gray-300 shadow-md w-full py-6">
@@ -8,13 +15,17 @@ const Footer = () => {
           <p>Email: contact@mytinerary.com</p>
           <p>Phone: (123) 456-7890</p>
         </div>
-        <div className="space-y-2 font-bold">
-          <p>
-            <a href="#" className="text-black hover:underline">Home</a>
-          </p>
-          <p>
-            <a href="#" className="text-black hover:underline">Cities</a>
-          </p>
+        <div className="space-y-2 font-bold flex flex-col justify-center items-center">
+          {routes.map((route) => (
+            <NavLink
+              key={route.path}
+              to={route.path}
+              className="text-black hover:underline"
+              activeClassName="text-blue-600 font-bold"
+            >
+              {route.name}
+            </NavLink>
+          ))}
           <p>
             <a href="#" className="text-black hover:underline">Login</a>
           </p>
@@ -25,8 +36,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-
-
-  
-  
