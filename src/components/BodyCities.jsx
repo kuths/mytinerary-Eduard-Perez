@@ -1,30 +1,27 @@
 import { useEffect, useState } from "react";
 
 const BodyCities = () => {
-  const [scale, setScale] = useState(1);
+  const [cities, setCities] = useState([]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScale(1 + window.scrollY * 0.0005);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    fetch("http://localhost:8080/api/city/allCity")
+      .then((response) => response.json())
+      .then((data) => setCities(data.response))
+      .catch((error) => console.error("Error fetching cities:", error));
   }, []);
 
   return (
     <div className="relative flex flex-col items-center text-blue-400 text-4xl font-bold overflow-hidden">
-      <div className="relative h-screen flex flex-col justify-center items-center w-full">
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-100 ease-out"
-          style={{
-            backgroundImage: "url('https://cdn.elviajerofisgon.com/wp-content/uploads/2024/04/La-Playa-las-Catedrales-es-uno-de-los-seis-paisajes-naturales-mas-impresionantes-de-Espana.-Adobe-Stock.jpg')",
-            transform: `scale(${scale})`,
-          }}
-        ></div>
-        <div className="relative z-10 text-center">
-          <h1 className="text-5xl font-bold">We are under construction, soon you will be able to discover all my tinerari.</h1>
-
-        </div>
+      <h1 className="text-5xl font-bold my-8">Discover Cities</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+        {cities.map((city) => (
+          <div key={city._id} className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <img src={city.img} alt={city.name} className="w-full h-48 object-cover" />
+            <div className="p-4">
+              <h2 className="text-xl font-bold text-gray-800">{city.name}</h2>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
