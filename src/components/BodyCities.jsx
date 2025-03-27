@@ -1,30 +1,70 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
-const BodyCities = () => {
+const CityList = () => {
   const [cities, setCities] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:8080/api/city/allCity")
       .then((response) => response.json())
-      .then((data) => setCities(data.response))
+      .then((data) => {
+        setCities(data.response);
+        setFilteredCities(data.response);
+      })
       .catch((error) => console.error("Error fetching cities:", error));
   }, []);
 
+  const handleSearch = (event) => {
+    const query = event.target.value.toLowerCase();
+    setSearch(query);
+
+    if (query === "") {
+      setFilteredCities(cities);
+    } else {
+      const filtered = cities.filter((city) =>
+        city.name.toLowerCase().startsWith(query)
+      );
+      setFilteredCities(filtered);
+    } 
+  };
+
+
+
   return (
-    <div className="relative flex flex-col items-center text-blue-400 text-4xl font-bold overflow-hidden">
-      <h1 className="text-5xl font-bold my-8">Discover Cities</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-        {cities.map((city) => (
-          <div key={city._id} className="bg-white shadow-lg rounded-lg overflow-hidden">
-            <img src={city.img} alt={city.name} className="w-full h-48 object-cover" />
-            <div className="p-4">
-              <h2 className="text-xl font-bold text-gray-800">{city.name}</h2>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="p-6">
+      <input
+        type="text"
+        placeholder="Search city..."
+        value={search}
+        onChange={handleSearch}
+        className="w-full p-2 border rounded-lg mb-4"
+      />
+      
+      {filteredCities.length === 0 ? (
+        <p className="text-center text-gray-500 text-lg">
+          No cities found with that name.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {filteredCities.map((city) => (
+            <Link key={city._id} to={`/cities/${city._id}`}>
+              <div className="border p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 transition">
+                <img
+                  src={city.img}
+                  alt={city.name}
+                  className="w-full h-40 object-cover rounded-md"
+                />
+                <h3 className="text-lg font-bold mt-2">{city.name}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
+  
 };
 
-export default BodyCities;
+export default CityList;

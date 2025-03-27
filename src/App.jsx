@@ -1,5 +1,6 @@
 import Home from "./pages/Home";
 import Cities from "./pages/Cities";
+import CityDetail from "./pages/CityDetail"; 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import StandardLayout from "./layouts/StandardLayout";
 
@@ -9,12 +10,16 @@ const router = createBrowserRouter([
     element: <StandardLayout />,
     children: [
       {
-        index: true, // ✅ Esto indica que "/" renderiza `Home`
+        index: true,
         element: <Home />,
       },
       {
-        path: "cities", // ✅ Se usa sin "/" porque es una ruta anidada
+        path: "cities",
         element: <Cities />,
+      },
+      {
+        path: "cities/:id", 
+        element: <CityDetail />,
       },
     ],
   },
@@ -25,4 +30,3 @@ function App() {
 }
 
 export default App;
-
