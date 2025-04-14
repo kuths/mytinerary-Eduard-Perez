@@ -1,36 +1,30 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { changeSearch, setCities } from "../cities/actions/cityActions"; 
 import { Link } from "react-router-dom";
 
 const CityList = () => {
-  const [cities, setCities] = useState([]);
-  const [filteredCities, setFilteredCities] = useState([]);
-  const [search, setSearch] = useState("");
+  const dispatch = useDispatch();
+
+  const cities = useSelector((state) => state.city.city); 
+  const search = useSelector((state) => state.city.search); 
+
+  const filteredCities = cities.filter((city) =>
+    city.name.toLowerCase().startsWith(search.toLowerCase())
+  );
 
   useEffect(() => {
     fetch("http://localhost:8080/api/city/allCity")
       .then((response) => response.json())
       .then((data) => {
-        setCities(data.response);
-        setFilteredCities(data.response);
+        dispatch(setCities(data.response));
       })
       .catch((error) => console.error("Error fetching cities:", error));
-  }, []);
+  }, [dispatch]);
 
   const handleSearch = (event) => {
-    const query = event.target.value.toLowerCase();
-    setSearch(query);
-
-    if (query === "") {
-      setFilteredCities(cities);
-    } else {
-      const filtered = cities.filter((city) =>
-        city.name.toLowerCase().startsWith(query)
-      );
-      setFilteredCities(filtered);
-    } 
+    dispatch(changeSearch(event.target.value));
   };
-
-
 
   return (
     <div className="p-6">
@@ -41,7 +35,7 @@ const CityList = () => {
         onChange={handleSearch}
         className="w-full p-2 border rounded-lg mb-4"
       />
-      
+
       {filteredCities.length === 0 ? (
         <p className="text-center text-gray-500 text-lg">
           No cities found with that name.
@@ -64,7 +58,6 @@ const CityList = () => {
       )}
     </div>
   );
-  
 };
 
 export default CityList;
